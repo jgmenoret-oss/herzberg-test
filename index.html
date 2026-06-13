@@ -332,10 +332,17 @@ function mostrarEstado(msg, tipo='info'){
 async function apiCall(params){
   if(!urlConectada()) throw new Error('URL no configurada');
   const url = APPS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
-  const res  = await fetch(url, {method:'GET', mode:'cors'});
-  const data = await res.json();
-  if(!data.ok) throw new Error(data.msg || 'Error del servidor');
-  return data;
+  const res  = await fetch(url, {method:'GET', mode:'no-cors'});
+  // no-cors no devuelve JSON, usamos un segundo fetch para leer
+  const res2 = await fetch(url, {method:'GET'});
+  const text = await res2.text();
+  try {
+    const data = JSON.parse(text);
+    if(!data.ok) throw new Error(data.msg || 'Error del servidor');
+    return data;
+  } catch(e) {
+    throw new Error('Respuesta inválida: ' + text.substring(0,100));
+  }
 }
 
 // Guardar — local ya no se usa, todo va a Sheets
