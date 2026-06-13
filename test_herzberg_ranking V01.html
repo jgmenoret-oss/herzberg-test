@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Motivación Laboral — Herzberg</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F4F2EE;--card:#fff;--ink:#1C1C1A;--ink2:#4A4845;--ink3:#9A9892;
+  --accent:#1A4A7A;--green:#2B5F3E;--amber:#C8853A;--danger:#8B2E2E;
+  --border:#E2DED8;--radius:12px;--shadow:0 2px 16px rgba(0,0,0,.07);
+  --hig:#1A4A7A;   /* higiene = azul */
+  --mot:#2B5F3E;   /* motivador = verde */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:16px;scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;padding-bottom:4rem}
+
+/* HEADER */
+.header{background:var(--accent);color:#fff;padding:1.4rem 1.5rem 1.2rem;text-align:center}
+.hdr-cat{font-size:.67rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.15rem}
+.header h1{font-family:'DM Serif Display',serif;font-size:clamp(1.25rem,5vw,1.85rem);margin-bottom:.25rem}
+.header p{font-size:.8rem;color:rgba(255,255,255,.7);max-width:520px;margin:0 auto}
+
+/* TABS */
+.tabs{display:flex;max-width:720px;margin:1.1rem auto 0;gap:.5rem;padding:0 1rem}
+.tab{flex:1;padding:.65rem;border:1.5px solid var(--border);border-radius:var(--radius);
+  background:var(--card);font-family:'DM Sans',sans-serif;font-size:.85rem;font-weight:500;
+  color:var(--ink2);cursor:pointer;transition:all .2s;text-align:center}
+.tab:hover{border-color:var(--accent);color:var(--accent)}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* PANELS */
+.panel{max-width:720px;margin:0 auto;padding:0 1rem;display:none}
+.panel.active{display:block}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1rem 1.2rem;margin-bottom:.8rem;box-shadow:var(--shadow)}
+.card-title{font-size:.7rem;font-weight:600;color:var(--ink3);text-transform:uppercase;
+  letter-spacing:.07em;margin-bottom:.6rem}
+
+/* NOMBRE */
+.nombre-row{display:flex;align-items:center;gap:.75rem}
+.nombre-row label{font-size:.85rem;color:var(--ink2);font-weight:500;white-space:nowrap}
+.nombre-row input{flex:1;border:1.5px solid var(--border);border-radius:7px;
+  padding:.42rem .8rem;font-family:'DM Sans',sans-serif;font-size:.95rem;color:var(--ink)}
+.nombre-row input:focus{outline:none;border-color:var(--accent)}
+
+/* RONDA SELECTOR */
+.ronda-row{display:flex;gap:.5rem;margin-top:.75rem}
+.ronda-btn{flex:1;padding:.55rem;border:1.5px solid var(--border);border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:.82rem;font-weight:500;
+  color:var(--ink2);background:var(--card);cursor:pointer;transition:all .2s;text-align:center}
+.ronda-btn:hover{border-color:var(--accent);color:var(--accent)}
+.ronda-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.ronda-btn.ronda2.active{background:var(--green);border-color:var(--green)}
+
+/* INSTRUCCION */
+.instruc{font-size:.8rem;color:var(--ink2);line-height:1.55;padding:.65rem .9rem;
+  background:#F0EDE8;border-radius:8px;margin-bottom:.75rem}
+.instruc strong{color:var(--ink)}
+
+/* LISTA RANKEABLE */
+.rank-list{list-style:none;padding:0;margin:0}
+.rank-item{
+  display:flex;align-items:center;gap:.75rem;
+  background:var(--card);border:1.5px solid var(--border);border-radius:10px;
+  padding:.7rem 1rem;margin-bottom:.45rem;
+  cursor:grab;user-select:none;
+  transition:border-color .2s, box-shadow .2s, transform .15s;
+  position:relative;
+}
+.rank-item:active{cursor:grabbing}
+.rank-item.dragging{opacity:.4;transform:scale(.98)}
+.rank-item.drag-over{border-color:var(--accent);box-shadow:0 0 0 2px rgba(26,74,122,.2)}
+.rank-item.hig{border-left:4px solid var(--hig)}
+.rank-item.mot{border-left:4px solid var(--mot)}
+.rank-pos{
+  font-family:'DM Serif Display',serif;font-size:1.25rem;
+  color:var(--ink3);min-width:24px;text-align:center;line-height:1
+}
+.rank-text{flex:1;font-size:.88rem;color:var(--ink);line-height:1.35}
+.rank-tipo{font-size:.65rem;font-weight:600;border-radius:99px;padding:.12rem .45rem;white-space:nowrap}
+.rank-tipo.hig{background:#EEF4FA;color:var(--hig)}
+.rank-tipo.mot{background:#EEF5F1;color:var(--mot)}
+.drag-handle{color:var(--ink3);font-size:1rem;cursor:grab;padding:0 .1rem}
+
+/* BOTONES */
+.btn{width:100%;padding:.82rem;border:none;border-radius:var(--radius);
+  font-family:'DM Sans',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;
+  transition:all .2s;margin-top:.4rem;letter-spacing:.01em}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#123660}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#1F4A2E}
+.btn-secondary{background:transparent;color:var(--ink3);border:1.5px solid var(--border)}
+.btn-secondary:hover{border-color:var(--ink3);color:var(--ink2)}
+.btn-amber{background:var(--amber);color:#fff}.btn-amber:hover{background:#A86A25}
+.btn-sm{width:auto;padding:.4rem .9rem;font-size:.8rem;margin-top:0}
+
+/* RESULTADO ALUMNO */
+.res-wrap{display:none}
+.res-ranking{list-style:none;padding:0;margin:.5rem 0}
+.res-rank-item{display:flex;align-items:center;gap:.75rem;padding:.5rem .75rem;
+  border-radius:8px;margin-bottom:.35rem;border:.5px solid}
+.res-rank-item.hig{background:#EEF4FA;border-color:#A8C0D8}
+.res-rank-item.mot{background:#EEF5F1;border-color:#A8CBB5}
+.rr-pos{font-family:'DM Serif Display',serif;font-size:1.1rem;color:var(--ink3);min-width:22px}
+.rr-text{flex:1;font-size:.84rem;color:var(--ink)}
+.rr-tipo{font-size:.65rem;font-weight:600;border-radius:99px;padding:.1rem .4rem}
+.rr-tipo.hig{background:#d0e4f5;color:var(--hig)}.rr-tipo.mot{background:#c8e6d5;color:var(--mot)}
+
+/* COMPARATIVA (ronda 1 vs 2) */
+.comp-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-top:.5rem}
+.comp-col h4{font-size:.72rem;font-weight:700;color:var(--ink3);text-transform:uppercase;
+  letter-spacing:.06em;margin-bottom:.4rem}
+.comp-item{display:flex;align-items:center;gap:.5rem;font-size:.8rem;padding:.3rem .5rem;
+  border-radius:6px;margin-bottom:.25rem;background:#F0EDE8}
+.comp-item .cp-pos{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--ink3);min-width:18px}
+.comp-item .cp-txt{flex:1;color:var(--ink2)}
+.delta{font-size:.7rem;font-weight:600;padding:.1rem .3rem;border-radius:4px}
+.delta.up{background:#E1F5EE;color:#0F6E56}.delta.down{background:#FCEBEB;color:var(--danger)}.delta.same{background:#F0EDE8;color:var(--ink3)}
+
+/* PANEL DOCENTE */
+.resp-list{display:flex;flex-direction:column;gap:.35rem;max-height:200px;overflow-y:auto;
+  border:1px solid var(--border);border-radius:8px;padding:.45rem}
+.resp-item{display:flex;align-items:center;gap:.5rem;font-size:.78rem;
+  color:var(--ink2);padding:.28rem .5rem;background:#FAFAF7;border-radius:6px}
+.resp-item .ri-name{font-weight:500;color:var(--ink);flex:1}
+.resp-item .ri-ronda{font-size:.68rem;padding:.08rem .35rem;border-radius:99px;font-weight:600}
+.ri-ronda.r1{background:#EEF4FA;color:var(--hig)}.ri-ronda.r2{background:#EEF5F1;color:var(--green)}
+.resp-del{background:none;border:none;color:var(--danger);cursor:pointer;font-size:.8rem;padding:.05rem .25rem}
+
+/* CHARTS */
+.chart-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1rem;box-shadow:var(--shadow);margin-bottom:.75rem}
+.chart-title{font-size:.72rem;font-weight:600;color:var(--ink3);text-transform:uppercase;
+  letter-spacing:.07em;margin-bottom:.6rem;text-align:center}
+canvas{display:block;width:100%;height:auto}
+
+/* LEYENDA */
+.leyenda{display:flex;gap:1rem;justify-content:center;margin-top:.5rem;flex-wrap:wrap}
+.ley-i{display:flex;align-items:center;gap:.35rem;font-size:.76rem;color:var(--ink2)}
+.ley-dot{width:11px;height:11px;border-radius:3px}
+
+/* PRINT */
+@media print{
+  @page{size:A4;margin:12mm 14mm}
+  .tabs,.btn,.btn-wrap,.panel:not(.active),.hdr-cat{display:none!important}
+  .header{padding:.5rem 1rem}.header h1{font-size:13pt}
+  .card{box-shadow:none;border:.5px solid #ddd;page-break-inside:avoid}
+  canvas{max-width:100%}
+}
+@media(max-width:480px){
+  .comp-grid{grid-template-columns:1fr}
+  .rank-item{padding:.6rem .75rem}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="hdr-cat">Cátedra de Organización Industrial I · UTN FRGP</div>
+  <h1>Motivación Laboral</h1>
+  <p>Teoría Bi-factorial de Frederick Herzberg · Encuesta de ranking de factores</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('alumno')">👤 Modo Alumno</button>
+  <button class="tab" onclick="switchTab('docente')">📊 Modo Docente</button>
+</div>
+
+<!-- ══════════════════════════════════
+     PANEL ALUMNO
+══════════════════════════════════ -->
+<div class="panel active" id="panel-alumno">
+
+  <div class="card" style="margin-top:1rem">
+    <div class="nombre-row">
+      <label>Nombre y Apellido:</label>
+      <input type="text" id="alu-nombre" placeholder="Tu nombre completo (podés dejarlo vacío)">
+    </div>
+    <div class="ronda-row">
+      <button class="ronda-btn active" id="btn-r1" onclick="setRonda(1)">🔵 Ronda 1 — Antes de la clase</button>
+      <button class="ronda-btn ronda2"  id="btn-r2" onclick="setRonda(2)">🟢 Ronda 2 — Después de la clase</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="instruc">
+      <strong>Instrucción:</strong> Ordená los siguientes factores laborales desde el que considerás
+      <strong>más importante</strong> (posición 1) hasta el <strong>menos importante</strong> (posición 8).
+      Arrastrá cada fila para cambiar su orden, o usá las flechas ↑↓.
+    </div>
+    <ul class="rank-list" id="rank-list"></ul>
+  </div>
+
+  <div style="max-width:720px;margin:0 auto;padding:0 1rem">
+    <button class="btn btn-primary" onclick="calcularAlumno()">Confirmar mi ranking →</button>
+    <button class="btn btn-secondary" onclick="resetRanking()" style="margin-top:.4rem">Restablecer orden original</button>
+  </div>
+
+  <!-- Resultado alumno -->
+  <div class="card res-wrap" id="res-alumno" style="margin-top:1rem">
+    <div style="font-family:'DM Serif Display',serif;font-size:1.15rem;margin-bottom:.65rem">
+      Tu ranking — <span id="res-ronda-label" style="color:var(--ink3);font-size:.9rem"></span>
+    </div>
+    <div id="res-nombre-show" style="font-size:.8rem;color:var(--ink3);margin-bottom:.6rem"></div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem">
+      <div style="background:#EEF4FA;border-radius:8px;padding:.75rem;border:.5px solid #A8C0D8">
+        <div style="font-size:.68rem;font-weight:700;color:var(--hig);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">Factores de Higiene (Extrínsecos)</div>
+        <div style="font-size:.76rem;color:var(--ink2);line-height:1.5" id="res-hig-list"></div>
+      </div>
+      <div style="background:#EEF5F1;border-radius:8px;padding:.75rem;border:.5px solid #A8CBB5">
+        <div style="font-size:.68rem;font-weight:700;color:var(--mot);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem">Factores Motivadores (Intrínsecos)</div>
+        <div style="font-size:.76rem;color:var(--ink2);line-height:1.5" id="res-mot-list"></div>
+      </div>
+    </div>
+
+    <ul class="res-ranking" id="res-ranking-list"></ul>
+
+    <!-- Comparativa R1 vs R2 -->
+    <div id="res-comp" style="display:none;margin-top:.75rem">
+      <div style="font-family:'DM Serif Display',serif;font-size:1rem;margin-bottom:.5rem;color:var(--ink)">
+        Comparativa: Ronda 1 vs Ronda 2
+      </div>
+      <div class="comp-grid" id="comp-grid"></div>
+      <canvas id="chartComp" width="580" height="260" style="margin-top:.75rem"></canvas>
+    </div>
+
+    <div style="margin-top:.75rem;display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn btn-green btn-sm" onclick="guardarEnDocente()">📋 Guardar en Modo Docente</button>
+      <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨 Imprimir</button>
+    </div>
+  </div>
+
+</div><!-- /panel-alumno -->
+
+<!-- ══════════════════════════════════
+     PANEL DOCENTE
+══════════════════════════════════ -->
+<div class="panel" id="panel-docente">
+
+  <div class="card" style="margin-top:1rem">
+    <div style="font-size:.82rem;color:var(--ink2);line-height:1.6">
+      <strong style="color:var(--ink)">Panel del docente.</strong>
+      Las respuestas se cargan automáticamente desde Google Sheets. Usá
+      <strong>Recargar desde Sheets</strong> para actualizar la lista en cualquier momento.
+    </div>
+    <div id="url-status" style="margin-top:.6rem;font-size:.78rem;padding:.45rem .75rem;border-radius:7px;background:#FEF6EC;color:#854F0B;border:.5px solid #F0C88A;display:none">
+      ⚠️ <strong>URL no configurada.</strong> Abrí el archivo HTML, buscá la línea
+      <code>APPS_SCRIPT_URL</code> y pegá la URL de tu Google Apps Script.
+    </div>
+  </div>
+
+  <!-- Respuestas -->
+  <div class="card">
+    <div class="card-title">Respuestas guardadas (<span id="n-resp">0</span>)</div>
+    <div class="resp-list" id="resp-list">
+      <div style="font-size:.78rem;color:var(--ink3);text-align:center;padding:.5rem">Sin respuestas aún.</div>
+    </div>
+    <div style="margin-top:.6rem;display:flex;gap:.5rem;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm" onclick="renderDocente()">🔄 Recargar desde Sheets</button>
+      <button class="btn btn-amber btn-sm" onclick="procesarGrupal()">📊 Actualizar y generar análisis</button>
+      <button class="btn btn-secondary btn-sm" onclick="exportarCSV()">⬇ Exportar CSV</button>
+    </div>
+  </div>
+
+  <!-- Resultados grupales -->
+  <div id="res-grupal" style="display:none">
+
+    <!-- Selector ronda para el gráfico -->
+    <div class="card">
+      <div class="card-title">Mostrar resultados de:</div>
+      <div class="ronda-row">
+        <button class="ronda-btn active" id="doc-r1" onclick="setDocRonda(1)">🔵 Ronda 1</button>
+        <button class="ronda-btn ronda2"  id="doc-r2" onclick="setDocRonda(2)">🟢 Ronda 2</button>
+        <button class="ronda-btn" id="doc-rc" onclick="setDocRonda('comp')" style="flex:1.4">🔄 Comparativa</button>
+      </div>
+    </div>
+
+    <div id="doc-stats-r1" class="doc-stats"></div>
+    <div id="doc-stats-r2" class="doc-stats" style="display:none"></div>
+    <div id="doc-stats-comp" class="doc-stats" style="display:none"></div>
+
+  </div>
+
+</div><!-- /panel-docente -->
+
+<div style="text-align:center;font-size:.68rem;color:var(--ink3);padding:1.5rem 1rem">
+  Motivación Laboral · Teoría Bi-factorial de Herzberg · Org. Industrial I — UTN FRGP
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// CONFIGURACIÓN — pegá aquí la URL de tu Google Apps Script
+// ══════════════════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'PEGAR_URL_AQUI';
+// ══════════════════════════════════════════════════════════════════════
+
+const FACTORES = [
+  {id:'A', label:'Políticas de empresa y la Administración', tipo:'H'},
+  {id:'B', label:'Relación con los compañeros',              tipo:'H'},
+  {id:'C', label:'Nivel de Responsabilidad otorgado',        tipo:'M'},
+  {id:'D', label:'Progreso en el trabajo',                   tipo:'M'},
+  {id:'E', label:'El salario',                               tipo:'H'},
+  {id:'F', label:'Seguridad en mantener el trabajo',         tipo:'H'},
+  {id:'G', label:'Oportunidad de logros',                    tipo:'M'},
+  {id:'H', label:'Condiciones laborales',                    tipo:'H'},
+];
+
+let rondaActiva = 1;
+let draggingEl  = null;
+let respuestas  = [];   // se carga desde Google Sheets
+let docRonda    = 1;
+
+// ── HELPERS DE RED ────────────────────────────────────────────────────────────
+function urlConectada(){ return APPS_SCRIPT_URL && APPS_SCRIPT_URL !== 'PEGAR_URL_AQUI'; }
+
+function mostrarEstado(msg, tipo='info'){
+  let el = document.getElementById('estado-conexion');
+  if(!el){ el=document.createElement('div'); el.id='estado-conexion';
+    el.style.cssText='position:fixed;bottom:1rem;right:1rem;padding:.6rem 1rem;border-radius:8px;font-size:.8rem;font-weight:500;z-index:999;max-width:300px;box-shadow:0 2px 12px rgba(0,0,0,.15);transition:opacity .4s';
+    document.body.appendChild(el); }
+  const colores={info:'#EEF4FA;color:#1A4A7A',ok:'#EEF5F1;color:#2B5F3E',error:'#FCEBEB;color:#8B2E2E',cargando:'#FEF6EC;color:#C8853A'};
+  el.style.cssText+=`;background:${(colores[tipo]||colores.info).split(';color:')[0]};color:${(colores[tipo]||colores.info).split(';color:')[1]}`;
+  el.textContent=msg; el.style.opacity='1';
+  if(tipo!=='cargando') setTimeout(()=>{ el.style.opacity='0'; },3500);
+}
+
+async function apiCall(params){
+  if(!urlConectada()) throw new Error('URL no configurada');
+  const url = APPS_SCRIPT_URL + '?' + new URLSearchParams(params).toString();
+  const res  = await fetch(url, {method:'GET', mode:'cors'});
+  const data = await res.json();
+  if(!data.ok) throw new Error(data.msg || 'Error del servidor');
+  return data;
+}
+
+// Guardar — local ya no se usa, todo va a Sheets
+async function guardar(){ /* las respuestas se guardan directo en Sheets */ }
+
+// ── TABS ──────────────────────────────────────────────────────────────────────
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach((b,i)=>b.classList.toggle('active',(i===0&&t==='alumno')||(i===1&&t==='docente')));
+  document.getElementById('panel-alumno').classList.toggle('active',t==='alumno');
+  document.getElementById('panel-docente').classList.toggle('active',t==='docente');
+  if(t==='docente'){
+    const warn=document.getElementById('url-status');
+    if(warn) warn.style.display=urlConectada()?'none':'block';
+    renderDocente();
+  }
+}
+
+// ── RONDA ─────────────────────────────────────────────────────────────────────
+function setRonda(r){
+  rondaActiva=r;
+  document.getElementById('btn-r1').classList.toggle('active',r===1);
+  document.getElementById('btn-r2').classList.toggle('active',r===2);
+  document.getElementById('res-alumno').style.display='none';
+}
+
+// ── RENDER LISTA RANKEABLE ────────────────────────────────────────────────────
+function renderRanking(){
+  const ul = document.getElementById('rank-list');
+  ul.innerHTML='';
+  FACTORES.forEach((f,i)=>{
+    const li = document.createElement('li');
+    li.className='rank-item';
+    li.dataset.id=f.id;
+    li.draggable=true;
+    li.innerHTML=`
+      <span class="drag-handle">⠿</span>
+      <span class="rank-pos">${i+1}</span>
+      <span class="rank-text">${f.label}</span>
+      <button onclick="moverItem(this,-1)" title="Subir" style="background:none;border:none;cursor:pointer;font-size:.9rem;color:var(--ink3);padding:.1rem .2rem">↑</button>
+      <button onclick="moverItem(this,+1)" title="Bajar" style="background:none;border:none;cursor:pointer;font-size:.9rem;color:var(--ink3);padding:.1rem .2rem">↓</button>`;
+    // Drag events
+    li.addEventListener('dragstart',onDragStart);
+    li.addEventListener('dragover', onDragOver);
+    li.addEventListener('drop',     onDrop);
+    li.addEventListener('dragend',  onDragEnd);
+    // Touch events
+    li.addEventListener('touchstart',onTouchStart,{passive:true});
+    li.addEventListener('touchmove', onTouchMove, {passive:false});
+    li.addEventListener('touchend',  onTouchEnd);
+    ul.appendChild(li);
+  });
+}
+
+function actualizarPosiciones(){
+  document.querySelectorAll('#rank-list .rank-item').forEach((li,i)=>{
+    li.querySelector('.rank-pos').textContent=i+1;
+  });
+}
+
+function moverItem(btn, dir){
+  const li = btn.closest('.rank-item');
+  const ul = li.parentNode;
+  const items = [...ul.children];
+  const idx = items.indexOf(li);
+  const newIdx = idx+dir;
+  if(newIdx<0||newIdx>=items.length) return;
+  if(dir===-1) ul.insertBefore(li, items[newIdx]);
+  else ul.insertBefore(items[newIdx], li);
+  actualizarPosiciones();
+}
+
+// ── DRAG & DROP (desktop) ─────────────────────────────────────────────────────
+function onDragStart(e){ draggingEl=this; this.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; }
+function onDragOver(e){ e.preventDefault(); e.dataTransfer.dropEffect='move';
+  document.querySelectorAll('.rank-item').forEach(el=>el.classList.remove('drag-over'));
+  this.classList.add('drag-over'); }
+function onDrop(e){ e.preventDefault();
+  if(draggingEl&&draggingEl!==this){
+    const ul=this.parentNode; const items=[...ul.children];
+    const iDrag=items.indexOf(draggingEl), iDrop=items.indexOf(this);
+    if(iDrag<iDrop) ul.insertBefore(draggingEl,this.nextSibling);
+    else ul.insertBefore(draggingEl,this);
+    actualizarPosiciones();
+  }}
+function onDragEnd(){ this.classList.remove('dragging');
+  document.querySelectorAll('.rank-item').forEach(el=>el.classList.remove('drag-over'));
+  draggingEl=null; }
+
+// ── TOUCH (mobile) ────────────────────────────────────────────────────────────
+let touchItem=null, touchClone=null, touchOffY=0;
+function onTouchStart(e){
+  touchItem=this;
+  const t=e.touches[0];
+  const rect=this.getBoundingClientRect();
+  touchOffY=t.clientY-rect.top;
+  touchClone=this.cloneNode(true);
+  touchClone.style.cssText=`position:fixed;left:${rect.left}px;top:${rect.top}px;width:${rect.width}px;opacity:.85;pointer-events:none;z-index:999;border:2px solid var(--accent);border-radius:10px;background:#fff`;
+  document.body.appendChild(touchClone);
+  this.style.opacity='.3';
+}
+function onTouchMove(e){
+  e.preventDefault();
+  const t=e.touches[0];
+  touchClone.style.top=(t.clientY-touchOffY)+'px';
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  const target=el?.closest('.rank-item');
+  document.querySelectorAll('.rank-item').forEach(el=>el.classList.remove('drag-over'));
+  if(target&&target!==touchItem) target.classList.add('drag-over');
+}
+function onTouchEnd(e){
+  if(touchClone){touchClone.remove();touchClone=null;}
+  touchItem.style.opacity='1';
+  const t=e.changedTouches[0];
+  const el=document.elementFromPoint(t.clientX,t.clientY);
+  const target=el?.closest('.rank-item');
+  if(target&&target!==touchItem){
+    const ul=target.parentNode; const items=[...ul.children];
+    const iA=items.indexOf(touchItem),iB=items.indexOf(target);
+    if(iA<iB) ul.insertBefore(touchItem,target.nextSibling);
+    else ul.insertBefore(touchItem,target);
+    actualizarPosiciones();
+  }
+  document.querySelectorAll('.rank-item').forEach(el=>el.classList.remove('drag-over'));
+  touchItem=null;
+}
+
+// ── CALCULAR ALUMNO ───────────────────────────────────────────────────────────
+function calcularAlumno(){
+  const items=[...document.querySelectorAll('#rank-list .rank-item')];
+  const ranking=items.map((li,i)=>({pos:i+1, id:li.dataset.id, ...FACTORES.find(f=>f.id===li.dataset.id)}));
+
+  // Mostrar resultado
+  document.getElementById('res-ronda-label').textContent=rondaActiva===1?'Ronda 1 — Antes de la clase':'Ronda 2 — Después de la clase';
+  const nombre=document.getElementById('alu-nombre').value.trim();
+  document.getElementById('res-nombre-show').textContent=nombre?'👤 '+nombre:'(respuesta anónima)';
+
+  // Listas H/M
+  const higItems=ranking.filter(f=>f.tipo==='H');
+  const motItems=ranking.filter(f=>f.tipo==='M');
+  document.getElementById('res-hig-list').innerHTML=higItems.map(f=>`<div>• #${f.pos} ${f.label}</div>`).join('');
+  document.getElementById('res-mot-list').innerHTML=motItems.map(f=>`<div>• #${f.pos} ${f.label}</div>`).join('');
+
+  // Ranking completo
+  const rl=document.getElementById('res-ranking-list');
+  rl.innerHTML=ranking.map(f=>`
+    <li class="res-rank-item ${f.tipo==='H'?'hig':'mot'}">
+      <span class="rr-pos">${f.pos}</span>
+      <span class="rr-text">${f.label}</span>
+      <span class="rr-tipo ${f.tipo==='H'?'hig':'mot'}">${f.tipo==='H'?'Higiene':'Motivador'}</span>
+    </li>`).join('');
+
+  // Comparativa si existen ambas rondas
+  const n=document.getElementById('alu-nombre').value.trim()||'yo';
+  const r1prev=respuestas.find(r=>r.nombre===(nombre||'Anónimo')&&r.ronda===1);
+  const r2prev=respuestas.find(r=>r.nombre===(nombre||'Anónimo')&&r.ronda===2);
+  const otraRonda=rondaActiva===1?r2prev:r1prev;
+
+  if(otraRonda){
+    mostrarComparativa(rondaActiva===1?ranking:otraRonda.ranking, rondaActiva===2?ranking:otraRonda.ranking);
+    document.getElementById('res-comp').style.display='block';
+  } else {
+    document.getElementById('res-comp').style.display='none';
+  }
+
+  window._ultimaResp={nombre:nombre||'Anónimo', ronda:rondaActiva, ranking};
+  document.getElementById('res-alumno').style.display='block';
+  document.getElementById('res-alumno').scrollIntoView({behavior:'smooth'});
+}
+
+function mostrarComparativa(r1,r2){
+  const grid=document.getElementById('comp-grid');
+  grid.innerHTML=`
+    <div>
+      <h4>🔵 Ronda 1 (antes)</h4>
+      ${r1.map(f=>{
+        const pos2=r2.find(x=>x.id===f.id)?.pos;
+        const d=pos2?f.pos-pos2:0;
+        const delta=d===0?'<span class="delta same">—</span>':d<0?`<span class="delta up">▲${Math.abs(d)}</span>`:`<span class="delta down">▼${Math.abs(d)}</span>`;
+        return `<div class="comp-item"><span class="cp-pos">${f.pos}</span><span class="cp-txt">${f.label}</span>${delta}</div>`;
+      }).join('')}
+    </div>
+    <div>
+      <h4>🟢 Ronda 2 (después)</h4>
+      ${r2.map(f=>`<div class="comp-item"><span class="cp-pos">${f.pos}</span><span class="cp-txt">${f.label}</span></div>`).join('')}
+    </div>`;
+  dibujarCompCanvas(r1,r2);
+}
+
+function dibujarCompCanvas(r1,r2){
+  const c=document.getElementById('chartComp');
+  const ctx=c.getContext('2d');
+  const W=c.width,H=c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#FAFAF8';ctx.fillRect(0,0,W,H);
+
+  const padL=180,padR=20,padT=20,padB=20;
+  const cW=W-padL-padR,cH=H-padT-padB;
+  const rowH=cH/8;
+
+  FACTORES.forEach((f,i)=>{
+    const y=padT+i*rowH+rowH/2;
+    // label
+    ctx.fillStyle='#4A4845';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='right';
+    const lbl=f.label.length>26?f.label.substring(0,25)+'…':f.label;
+    ctx.fillText(lbl,padL-6,y+4);
+
+    // posición R1
+    const p1=r1.find(x=>x.id===f.id)?.pos||0;
+    const p2=r2.find(x=>x.id===f.id)?.pos||0;
+    const x1=padL+((8-p1)/(7))*cW;
+    const x2=padL+((8-p2)/(7))*cW;
+
+    // línea de cambio
+    ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x2,y);
+    const moved=Math.abs(p1-p2);
+    ctx.strokeStyle=moved===0?'#C0BDB5':p2<p1?'#2B5F3E88':'#8B2E2E88';
+    ctx.lineWidth=moved===0?1:2;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
+
+    // puntos
+    [x1,x2].forEach((x,ri)=>{
+      ctx.beginPath();ctx.arc(x,y,6,0,2*Math.PI);
+      ctx.fillStyle=ri===0?'#1A4A7A':'#2B5F3E';ctx.fill();
+      ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+      ctx.fillStyle='#fff';ctx.font='bold 8px DM Sans,sans-serif';ctx.textAlign='center';
+      ctx.fillText(ri===0?p1:p2,x,y+3);
+    });
+  });
+
+  // eje top
+  for(let p=1;p<=8;p++){
+    const x=padL+((8-p)/7)*cW;
+    ctx.fillStyle='#9A9892';ctx.font='9px DM Sans,sans-serif';ctx.textAlign='center';
+    ctx.fillText(p,x,padT-5);
+    ctx.beginPath();ctx.moveTo(x,padT);ctx.lineTo(x,H-padB);
+    ctx.strokeStyle='#EAE7E0';ctx.lineWidth=.7;ctx.stroke();
+  }
+  ctx.fillStyle='#9A9892';ctx.font='9px DM Sans,sans-serif';ctx.textAlign='right';
+  ctx.fillText('← más importante',padL-6,padT-5);
+}
+
+// ── GUARDAR EN SHEETS ─────────────────────────────────────────────────────────
+async function guardarEnDocente(){
+  if(!window._ultimaResp){ alert('Primero confirmá tu ranking.'); return; }
+  if(!urlConectada()){
+    alert('La URL de Google Apps Script no está configurada todavía.\nAbrí el HTML, buscá la línea APPS_SCRIPT_URL y pegá tu URL.');
+    return;
+  }
+  const d = window._ultimaResp;
+  const btn = event.target;
+  btn.disabled=true; btn.textContent='Enviando…';
+  mostrarEstado('Enviando respuesta a Google Sheets…','cargando');
+  try {
+    const params = { action:'guardar', nombre:d.nombre, ronda:d.ronda };
+    d.ranking.forEach(f=>{ params[f.id]=f.pos; });
+    await apiCall(params);
+    mostrarEstado('✓ Respuesta guardada correctamente','ok');
+    btn.textContent='✓ Guardado en Sheets';
+  } catch(err){
+    mostrarEstado('Error: '+err.message,'error');
+    btn.disabled=false; btn.textContent='📋 Guardar en Modo Docente';
+  }
+}
+
+function resetRanking(){
+  renderRanking();
+  document.getElementById('res-alumno').style.display='none';
+}
+
+// ── PANEL DOCENTE ─────────────────────────────────────────────────────────────
+async function renderDocente(){
+  renderRespList([]);
+  if(!urlConectada()){
+    document.getElementById('resp-list').innerHTML=
+      '<div style="font-size:.78rem;color:#C8853A;padding:.5rem">⚠️ Configurá la URL de Apps Script para cargar respuestas.</div>';
+    return;
+  }
+  mostrarEstado('Cargando respuestas desde Google Sheets…','cargando');
+  try {
+    const res = await apiCall({action:'leer'});
+    respuestas = res.data || [];
+    mostrarEstado(`✓ ${respuestas.length} respuesta(s) cargadas`,'ok');
+    renderRespList(respuestas);
+  } catch(err){
+    mostrarEstado('Error al cargar: '+err.message,'error');
+    renderRespList([]);
+  }
+}
+
+function renderRespList(data){
+  const list=document.getElementById('resp-list');
+  document.getElementById('n-resp').textContent=data.length;
+  if(!data.length){
+    list.innerHTML='<div style="font-size:.78rem;color:var(--ink3);text-align:center;padding:.5rem">Sin respuestas aún.</div>';
+    return;
+  }
+  list.innerHTML=data.map((r,i)=>`
+    <div class="resp-item">
+      <span class="ri-name">${r.nombre}</span>
+      <span class="ri-ronda r${r.ronda}">Ronda ${r.ronda}</span>
+      <span style="font-size:.7rem;color:var(--ink3);flex:1;text-align:right">
+        Top3: ${r.ranking.slice(0,3).map(x=>x.label.split(' ')[0]).join(', ')}
+      </span>
+    </div>`).join('');
+}
+
+function limpiarDocente(){
+  alert('Para borrar respuestas, eliminá las filas directamente en Google Sheets.');
+}
+
+function setDocRonda(r){
+  docRonda=r;
+  ['r1','r2','comp'].forEach(k=>{
+    document.getElementById('doc-'+k).classList.toggle('active',k===(r==='comp'?'comp':('r'+r)));
+  });
+  document.getElementById('doc-stats-r1').style.display=r===1?'block':'none';
+  document.getElementById('doc-stats-r2').style.display=r===2?'block':'none';
+  document.getElementById('doc-stats-comp').style.display=r==='comp'?'block':'none';
+}
+
+// ── PROCESAR GRUPAL ───────────────────────────────────────────────────────────
+async function procesarGrupal(){
+  // Siempre recargar desde Sheets antes de procesar para tener datos frescos
+  mostrarEstado('Actualizando datos desde Google Sheets…','cargando');
+  try {
+    const res = await apiCall({action:'leer'});
+    respuestas = res.data || [];
+    renderRespList(respuestas);
+    mostrarEstado(`✓ ${respuestas.length} respuesta(s) cargadas`,'ok');
+  } catch(err){
+    mostrarEstado('Error al cargar: '+err.message,'error');
+    if(!respuestas.length){ alert('No se pudieron cargar las respuestas.'); return; }
+  }
+
+  if(!respuestas.length){ alert('No hay respuestas guardadas en Sheets.'); return; }
+
+  const r1=respuestas.filter(r=>r.ronda===1);
+  const r2=respuestas.filter(r=>r.ronda===2);
+
+  // Limpiar resultados anteriores
+  document.getElementById('doc-stats-r1').innerHTML='';
+  document.getElementById('doc-stats-r2').innerHTML='';
+  document.getElementById('doc-stats-comp').innerHTML='';
+
+  generarStats('r1',r1,'🔵 Ronda 1 — Antes de la clase',r2.length>0);
+  if(r2.length) generarStats('r2',r2,'🟢 Ronda 2 — Después de la clase',false);
+  if(r1.length&&r2.length) generarStatsComp(r1,r2);
+
+  document.getElementById('res-grupal').style.display='block';
+
+  // Mostrar ronda 2 y comparativa si existen, sino ronda 1
+  if(r1.length&&r2.length) setDocRonda('comp');
+  else if(r2.length) setDocRonda(2);
+  else setDocRonda(1);
+
+  document.getElementById('res-grupal').scrollIntoView({behavior:'smooth'});
+}
+
+function calcPromedioPos(rondaData){
+  // Para cada factor, promedio de la posición asignada (1=más importante)
+  return FACTORES.map(f=>{
+    const poss=rondaData.map(r=>r.ranking.find(x=>x.id===f.id)?.pos||0).filter(p=>p>0);
+    const avg=poss.length?poss.reduce((a,b)=>a+b,0)/poss.length:0;
+    return{...f, avg:Math.round(avg*100)/100, poss};
+  }).sort((a,b)=>a.avg-b.avg); // menor posición = más importante
+}
+
+function generarStats(key,data,titulo,hayR2){
+  const cont=document.getElementById('doc-stats-'+key);
+  if(!data.length){cont.innerHTML=`<div class="card"><div style="font-size:.82rem;color:var(--ink3)">No hay respuestas para esta ronda.</div></div>`;return;}
+  const ranked=calcPromedioPos(data);
+  const N=data.length;
+
+  let html=`<div class="card"><div style="font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:.6rem;color:var(--ink)">${titulo} · ${N} participante${N>1?'s':''}</div>`;
+  html+=`<div class="card-title">Ranking grupal (por posición promedio)</div>`;
+  html+=`<ul class="res-ranking" style="margin-bottom:.75rem">`;
+  ranked.forEach((f,i)=>{
+    html+=`<li class="res-rank-item ${f.tipo==='H'?'hig':'mot'}">
+      <span class="rr-pos">${i+1}</span>
+      <span class="rr-text">${f.label} <span style="font-size:.7rem;color:var(--ink3)">(prom. pos. ${f.avg})</span></span>
+      <span class="rr-tipo ${f.tipo==='H'?'hig':'mot'}">${f.tipo==='H'?'Higiene':'Motivador'}</span>
+    </li>`;
+  });
+  html+=`</ul></div>`;
+  cont.innerHTML=html;
+
+  // Canvas ranking
+  const wrap=document.createElement('div');
+  wrap.className='chart-wrap';
+  wrap.innerHTML=`<div class="chart-title">Importancia promedio por factor (posición 1 = más importante)</div>
+    <canvas id="chartDoc-${key}" width="640" height="320"></canvas>
+    <div class="leyenda">
+      <div class="ley-i"><div class="ley-dot" style="background:var(--hig)"></div>Higiene (Extrínseco)</div>
+      <div class="ley-i"><div class="ley-dot" style="background:var(--mot)"></div>Motivador (Intrínseco)</div>
+    </div>`;
+  cont.appendChild(wrap);
+
+  // Insert interpretación
+  const higTop=ranked.slice(0,4).filter(f=>f.tipo==='H').length;
+  const motTop=ranked.slice(0,4).filter(f=>f.tipo==='M').length;
+  let interp='';
+  if(motTop>higTop) interp='El grupo prioriza principalmente <strong>factores motivadores</strong> (intrínsecos). Esto sugiere que el contenido del trabajo, el logro y el crecimiento son las principales fuentes de motivación percibida.';
+  else if(higTop>motTop) interp='El grupo prioriza principalmente <strong>factores de higiene</strong> (extrínsecos). Esto indica que las condiciones del entorno laboral (salario, seguridad, relaciones) pesan más en la percepción actual.';
+  else interp='Hay un <strong>equilibrio</strong> entre factores de higiene y motivadores en el top 4 del grupo.';
+  const interpDiv=document.createElement('div');
+  interpDiv.className='card';
+  interpDiv.innerHTML=`<div style="font-family:'DM Serif Display',serif;font-size:.95rem;margin-bottom:.4rem">Interpretación Herzberg</div>
+    <div style="font-size:.82rem;color:var(--ink2);line-height:1.65">${interp}</div>`;
+  cont.appendChild(interpDiv);
+
+  // dibujar canvas después de insertado en DOM
+  requestAnimationFrame(()=>dibujarRankingChart('chartDoc-'+key, ranked, N));
+}
+
+function dibujarRankingChart(canvasId, ranked, N){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#FAFAF8';ctx.fillRect(0,0,W,H);
+
+  const padL=195,padR=60,padT=25,padB=30;
+  const cW=W-padL-padR,cH=H-padT-padB;
+  const barH=Math.floor(cH/8)-6;
+
+  // escala: posición 1 (más imp) a 8 (menos imp) → invertir para que 1 sea la barra más larga
+  // valor a graficar = 9 - avg (así más largo = más importante)
+  const maxVal=8;
+
+  // grid vertical
+  for(let p=1;p<=8;p++){
+    const x=padL+((p-1)/7)*cW;
+    ctx.beginPath();ctx.moveTo(x,padT);ctx.lineTo(x,H-padB);
+    ctx.strokeStyle='#EAE7E0';ctx.lineWidth=.7;ctx.stroke();
+    ctx.fillStyle='#9A9892';ctx.font='9px DM Sans,sans-serif';ctx.textAlign='center';
+    ctx.fillText(p===1?'1\n(+ imp)':p===8?'8\n(- imp)':p,x,padT-4);
+  }
+
+  ranked.forEach((f,i)=>{
+    const y=padT+i*(barH+6);
+    const barW=((maxVal+1-f.avg)/maxVal)*cW;
+    const color=f.tipo==='H'?'#1A4A7A':'#2B5F3E';
+    const bgColor=f.tipo==='H'?'#D6E4F0':'#D4E8DC';
+
+    // label
+    const lbl=f.label.length>28?f.label.substring(0,27)+'…':f.label;
+    ctx.fillStyle='#4A4845';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='right';
+    ctx.fillText(`${i+1}. ${lbl}`,padL-6,y+barH/2+4);
+
+    // barra fondo
+    ctx.fillStyle=bgColor;ctx.beginPath();ctx.roundRect(padL,y,cW,barH,4);ctx.fill();
+    // barra valor
+    ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(padL,y,barW,barH,4);ctx.fill();
+
+    // etiqueta promedio
+    ctx.fillStyle='#fff';ctx.font='bold 9px DM Sans,sans-serif';ctx.textAlign='left';
+    if(barW>30) ctx.fillText('pos.prom: '+f.avg,padL+5,y+barH/2+4);
+    else{ctx.fillStyle=color;ctx.fillText('pos.prom: '+f.avg,padL+barW+4,y+barH/2+4);}
+
+    // % que lo puso en top 3
+    const top3=f.poss.filter(p=>p<=3).length;
+    const pct=Math.round(top3/N*100);
+    ctx.fillStyle='#6A6A64';ctx.font='8px DM Sans,sans-serif';ctx.textAlign='left';
+    ctx.fillText(`Top 3: ${pct}%`,W-padR+4,y+barH/2+4);
+  });
+}
+
+function generarStatsComp(r1data,r2data){
+  const ranked1=calcPromedioPos(r1data);
+  const ranked2=calcPromedioPos(r2data);
+  const cont=document.getElementById('doc-stats-comp');
+
+  let html=`<div class="card">
+    <div style="font-family:'DM Serif Display',serif;font-size:1.05rem;margin-bottom:.6rem">
+      Comparativa Ronda 1 vs Ronda 2
+    </div>
+    <div class="comp-grid">
+      <div><h4>🔵 Ronda 1 (${r1data.length} resp.)</h4>
+        ${ranked1.map((f,i)=>{
+          const pos2=ranked2.find(x=>x.id===f.id);
+          const idx2=ranked2.indexOf(pos2)+1;
+          const d=i+1-idx2;
+          const delta=d===0?'<span class="delta same">—</span>':d>0?`<span class="delta up">▲${Math.abs(d)}</span>`:`<span class="delta down">▼${Math.abs(d)}</span>`;
+          return `<div class="comp-item"><span class="cp-pos">${i+1}</span><span class="cp-txt">${f.label} <small style="color:var(--ink3)">(${f.avg})</small></span>${delta}</div>`;
+        }).join('')}
+      </div>
+      <div><h4>🟢 Ronda 2 (${r2data.length} resp.)</h4>
+        ${ranked2.map((f,i)=>`<div class="comp-item"><span class="cp-pos">${i+1}</span><span class="cp-txt">${f.label} <small style="color:var(--ink3)">(${f.avg})</small></span></div>`).join('')}
+      </div>
+    </div>
+  </div>`;
+  cont.innerHTML=html;
+
+  const wrap=document.createElement('div');
+  wrap.className='chart-wrap';
+  wrap.innerHTML=`<div class="chart-title">Cambio de posición promedio por factor (R1 vs R2)</div>
+    <canvas id="chartComp-doc" width="640" height="340"></canvas>`;
+  cont.appendChild(wrap);
+  requestAnimationFrame(()=>dibujarCompDoc('chartComp-doc',ranked1,ranked2));
+}
+
+function dibujarCompDoc(canvasId,r1,r2){
+  const canvas=document.getElementById(canvasId);
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+  const W=canvas.width,H=canvas.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle='#FAFAF8';ctx.fillRect(0,0,W,H);
+
+  const padL=195,padR=70,padT=25,padB=20;
+  const cW=W-padL-padR,cH=H-padT-padB;
+  const rowH=cH/8;
+
+  // ejes
+  for(let p=1;p<=8;p++){
+    const x=padL+((p-1)/7)*cW;
+    ctx.beginPath();ctx.moveTo(x,padT);ctx.lineTo(x,H-padB);
+    ctx.strokeStyle='#EAE7E0';ctx.lineWidth=.8;ctx.stroke();
+    ctx.fillStyle='#9A9892';ctx.font='9px DM Sans,sans-serif';ctx.textAlign='center';
+    ctx.fillText(p,x,padT-5);
+  }
+  ctx.fillStyle='#9A9892';ctx.font='8px DM Sans,sans-serif';ctx.textAlign='left';
+  ctx.fillText('← más importante · menos importante →',padL,padT-5);
+
+  FACTORES.forEach((f,i)=>{
+    const y=padT+i*rowH+rowH/2;
+    const f1=r1.find(x=>x.id===f.id);
+    const f2=r2.find(x=>x.id===f.id);
+    if(!f1||!f2) return;
+
+    const x1=padL+((f1.avg-1)/7)*cW;
+    const x2=padL+((f2.avg-1)/7)*cW;
+
+    // label
+    const lbl=f.label.length>26?f.label.substring(0,25)+'…':f.label;
+    ctx.fillStyle='#4A4845';ctx.font='10px DM Sans,sans-serif';ctx.textAlign='right';
+    ctx.fillText(lbl,padL-6,y+4);
+
+    // línea cambio
+    const moved=Math.abs(f1.avg-f2.avg);
+    ctx.beginPath();ctx.moveTo(x1,y);ctx.lineTo(x2,y);
+    ctx.strokeStyle=moved<0.5?'#C0BDB5':f2.avg<f1.avg?'#2B5F3E99':'#8B2E2E99';
+    ctx.lineWidth=moved<0.5?1:2.5;ctx.setLineDash([4,3]);ctx.stroke();ctx.setLineDash([]);
+
+    // punto R1
+    ctx.beginPath();ctx.arc(x1,y,6,0,2*Math.PI);
+    ctx.fillStyle='#1A4A7A';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 8px DM Sans,sans-serif';ctx.textAlign='center';
+    ctx.fillText(f1.avg.toFixed(1),x1,y+3);
+
+    // punto R2
+    ctx.beginPath();ctx.arc(x2,y,6,0,2*Math.PI);
+    ctx.fillStyle='#2B5F3E';ctx.fill();ctx.strokeStyle='#fff';ctx.lineWidth=1.5;ctx.stroke();
+    ctx.fillStyle='#fff';ctx.font='bold 8px DM Sans,sans-serif';ctx.textAlign='center';
+    ctx.fillText(f2.avg.toFixed(1),x2,y+3);
+
+    // delta etiqueta
+    const delta=f1.avg-f2.avg;
+    if(Math.abs(delta)>=0.3){
+      ctx.fillStyle=delta>0?'#2B5F3E':'#8B2E2E';
+      ctx.font='bold 9px DM Sans,sans-serif';ctx.textAlign='left';
+      ctx.fillText((delta>0?'▲':'▼')+Math.abs(delta).toFixed(1),W-padR+4,y+4);
+    }
+  });
+
+  // leyenda
+  [[12,'#1A4A7A','Ronda 1'],[12+80,'#2B5F3E','Ronda 2']].forEach(([x,c,l])=>{
+    ctx.beginPath();ctx.arc(padL+x,H-5,5,0,2*Math.PI);ctx.fillStyle=c;ctx.fill();
+    ctx.fillStyle='#4A4845';ctx.font='9px DM Sans,sans-serif';ctx.textAlign='left';
+    ctx.fillText(l,padL+x+8,H-1);
+  });
+}
+
+// ── EXPORTAR CSV ──────────────────────────────────────────────────────────────
+function exportarCSV(){
+  if(!respuestas.length){alert('No hay datos cargados. Usá el botón Recargar desde Sheets primero.');return;}
+  let csv='Nombre,Ronda,'+FACTORES.map(f=>f.label).join(',')+'\n';
+  respuestas.forEach(r=>{
+    const row=FACTORES.map(f=>r.ranking.find(x=>x.id===f.id)?.pos||'');
+    csv+=`${r.nombre},${r.ronda},${row.join(',')}\n`;
+  });
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='herzberg_ranking.csv';a.click();
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+renderRanking();
+// renderDocente() se llama al hacer clic en la pestaña Docente
+</script>
+</body>
+</html>
