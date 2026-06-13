@@ -655,11 +655,15 @@ function limpiarDocente(){
 function setDocRonda(r){
   docRonda=r;
   ['r1','r2','comp'].forEach(k=>{
-    document.getElementById('doc-'+k).classList.toggle('active',k===(r==='comp'?'comp':('r'+r)));
+    const el = document.getElementById('doc-'+k);
+    if(el) el.classList.toggle('active', k===(r==='comp'?'comp':('r'+r)));
   });
-  document.getElementById('doc-stats-r1').style.display=r===1?'block':'none';
-  document.getElementById('doc-stats-r2').style.display=r===2?'block':'none';
-  document.getElementById('doc-stats-comp').style.display=r==='comp'?'block':'none';
+  const s1 = document.getElementById('doc-stats-r1');
+  const s2 = document.getElementById('doc-stats-r2');
+  const sc = document.getElementById('doc-stats-comp');
+  if(s1) s1.style.display = r===1?'block':'none';
+  if(s2) s2.style.display = r===2?'block':'none';
+  if(sc) sc.style.display = r==='comp'?'block':'none';
 }
 
 // ── PROCESAR GRUPAL ───────────────────────────────────────────────────────────
